@@ -170,7 +170,7 @@ public class LootGenerator {
 	 * @return ret, a String
 	 * @throws FileNotFoundException
 	 */
-	public static String generateAffixAndStats(BaseItem baseItem) throws FileNotFoundException {
+	public static String generateAffixAndStats(BaseItem baseItem, File prefixFile, File suffixFile) throws FileNotFoundException {
 		String ret;
 		Random randPre = new Random();
 		Random randSuf = new Random();
@@ -178,23 +178,19 @@ public class LootGenerator {
 		int randNumSuf = randSuf.nextInt(2);
 		//50% chance of prefix
 		if (randNumPre == 0 && randNumSuf == 1) {
-			File prefixFile = new File("src/data/large/MagicPrefix.txt");
 			Prefix pre = getPrefix(prefixFile);
 			ret = pre.getPrefix() + " " + baseItem.getName() + "\n" + generateBaseStat(baseItem)
 				+ "\n" + pre.statistic() + " " + pre.getMod1Code();
 			return ret;
 		// 50% chance of suffix
 		} else if (randNumSuf == 0 && randNumPre == 1) {
-			File suffixFile = new File("src/data/large/MagicSuffix.txt");
 			Suffix suf = getSuffix(suffixFile);
 			ret = baseItem.getName() + " " + suf.getSuffix() + "\n" + generateBaseStat(baseItem)
 				+ "\n" + suf.statistic() + " " + suf.getMod1Code();
 			return ret;
 		//When both get generated
 		} else if (randNumSuf == 0 && randNumPre == 0){
-			File prefixFile = new File("src/data/large/MagicPrefix.txt");
 			Prefix pre = getPrefix(prefixFile);
-			File suffixFile = new File("src/data/large/MagicSuffix.txt");
 			Suffix suf = getSuffix(suffixFile);
 			ret = pre.getPrefix() + " " + baseItem.getName() + " " + suf.getSuffix() + "\n" 
 				+ generateBaseStat(baseItem) + "\n" + pre.statistic() + " " + pre.getMod1Code() + "\n" + suf.statistic() + " " + suf.getMod1Code();
@@ -216,10 +212,13 @@ public class LootGenerator {
 		String resp = "y";
 		do {
 			//Get file
-			File monsterFile = new File("src/data/large/monstats.txt");
+			String fileSize = "large";
+			File monsterFile = new File("src/data/" + fileSize + "/monstats.txt");
 			Monster m = pickMonster(getMonsters(monsterFile));
-			File treasureClassFile = new File("src/data/large/TreasureClassEx.txt");
-			File armorFile = new File("src/data/large/armor.txt");
+			File treasureClassFile = new File("src/data/"  + fileSize + "/TreasureClassEx.txt");
+			File armorFile = new File("src/data/" + fileSize + "/armor.txt");
+			File prefixFile = new File("src/data/" + fileSize + "/MagicPrefix.txt");
+			File suffixFile = new File("src/data/" + fileSize + "/MagicSuffix.txt");
 			
 			//Generate user's prompt
 			System.out.println("Fighting " + m.getName());
@@ -231,7 +230,7 @@ public class LootGenerator {
 			Map<BaseItem, Integer> armorList = getArmors(armorFile);
 			Treasure treasure = fetchTreasureClass(m, treasureList);
 			BaseItem baseItem = generateBaseItem(treasure, armorList, treasureList);
-			System.out.println(generateAffixAndStats(baseItem));
+			System.out.println(generateAffixAndStats(baseItem, prefixFile, suffixFile));
 			System.out.println("\n");
 			System.out.println("Fight again [y/n]?");
 			in = new Scanner(System.in);

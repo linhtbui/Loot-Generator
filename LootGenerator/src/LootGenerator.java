@@ -208,22 +208,21 @@ public class LootGenerator {
 	 * @throws FileNotFoundException
 	 */
 	public static void main(String[] argc) throws FileNotFoundException  {
-
+		//Get file
 		String resp = "y";
-		do {
-			//Get file
-			String fileSize = "large";
-			File monsterFile = new File("src/data/" + fileSize + "/monstats.txt");
-			Monster m = pickMonster(getMonsters(monsterFile));
-			File treasureClassFile = new File("src/data/"  + fileSize + "/TreasureClassEx.txt");
-			File armorFile = new File("src/data/" + fileSize + "/armor.txt");
-			File prefixFile = new File("src/data/" + fileSize + "/MagicPrefix.txt");
-			File suffixFile = new File("src/data/" + fileSize + "/MagicSuffix.txt");
-			
+		String fileSize = "large";
+		File monsterFile = new File("src/data/" + fileSize + "/monstats.txt");
+		Monster m = pickMonster(getMonsters(monsterFile));
+		File treasureClassFile = new File("src/data/"  + fileSize + "/TreasureClassEx.txt");
+		File armorFile = new File("src/data/" + fileSize + "/armor.txt");
+		File prefixFile = new File("src/data/" + fileSize + "/MagicPrefix.txt");
+		File suffixFile = new File("src/data/" + fileSize + "/MagicSuffix.txt");
+		
+		while (resp.equalsIgnoreCase("y") || resp.equalsIgnoreCase("yes")) {		
 			//Generate user's prompt
 			System.out.println("Fighting " + m.getName());
 			System.out.println("You have slain " + m.getName());
-			System.out.println(m.getName() + " dropped: \n \n");
+			System.out.println(m.getName() + " dropped: \n");
 			
 			//Get the data from files
 			Map<Treasure, Integer> treasureList = getTreasureClass(treasureClassFile);
@@ -231,14 +230,18 @@ public class LootGenerator {
 			Treasure treasure = fetchTreasureClass(m, treasureList);
 			BaseItem baseItem = generateBaseItem(treasure, armorList, treasureList);
 			System.out.println(generateAffixAndStats(baseItem, prefixFile, suffixFile));
-			System.out.println("\n");
-			System.out.println("Fight again [y/n]?");
+			System.out.println();
+			System.out.print("Fight again [y/n]? ");
 			in = new Scanner(System.in);
 			resp = in.nextLine();
 			if (resp.equalsIgnoreCase("n") || resp.equalsIgnoreCase("no")) {
 				return;
 			} 
-		} while (resp.equalsIgnoreCase("y") || resp.equalsIgnoreCase("yes"));
-
+			while (!resp.equalsIgnoreCase("n") && !resp.equalsIgnoreCase("y")) {
+				System.out.println("Invalid input, try again");
+				System.out.println("Fight again [y/n]?");
+				resp = in.nextLine();
+			} 
+		} 
 	}
 }
